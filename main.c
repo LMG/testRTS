@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
 	initSDL(&screen);
 	
 	//tiling 
-	SDL_Surface *tile = IMG_Load("ressources/tile.png");
+	SDL_Surface *tile = IMG_Load("ressources/tile_001.png");
+	SDL_SetColorKey(tile, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 221, 0, 221));
 		
 	//main loop
     SDL_Event event;
@@ -46,12 +47,21 @@ int main(int argc, char *argv[])
         // erasing the screen
         SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
         
-        //blitting the tiles TODO: add type
+        //blitting the tiles TODO: do it right :D
         int x, y;
         SDL_Rect position;
         for (x=0; x<(screen->w); x+=tile->w)
         {
         	for (y=0; y<(screen->h); y+=tile->h)
+        	{
+        		position.x = x;
+        		position.y = y;
+        		SDL_BlitSurface(tile, NULL, screen, &position);
+        	}
+        }
+        for (x=tile->w/2; x<(screen->w); x+=tile->w)
+        {
+        	for (y=tile->h/2; y<(screen->h); y+=tile->h)
         	{
         		position.x = x;
         		position.y = y;
