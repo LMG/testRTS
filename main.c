@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         // erasing the screen
         SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
         
-        //blitting the tiles
+        //blitting the tiles TODO: add type
         int x, y;
         SDL_Rect position;
         for (x=0; x<(screen->w); x+=tile->w)
