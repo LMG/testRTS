@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "graphics.h"
 
-#define DELAY 100
+#define DELAY 25
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
 	//tiling 
 	SDL_Surface *tile = IMG_Load("ressources/tile_001.png");
 	SDL_SetColorKey(tile, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 221, 0, 221));
+    SDL_Rect origin = {0,0};
+    SDL_Rect boardSize = {30,30};
 		
 	//main loop
     SDL_Event event;
@@ -33,8 +35,16 @@ int main(int argc, char *argv[])
                         keepPlaying = 0;
                         break;
                     case SDLK_RIGHT:
+                    	origin.x +=5;
                     	break;
                    	case SDLK_LEFT:
+                    	origin.x -=5;
+                   		break;
+                   	case SDLK_UP:
+                    	origin.y -=5;
+                   		break;
+                   	case SDLK_DOWN:
+                    	origin.y +=5;
                    		break;
                     default: 
                     	break;
@@ -47,24 +57,15 @@ int main(int argc, char *argv[])
         // erasing the screen
         SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
         
-        //blitting the tiles TODO: do it right :D
+        //blitting the tiles TODO: load the tiles from a matrix
         int x, y;
         SDL_Rect position;
-        for (x=0; x<(screen->w); x+=tile->w)
+        for (x=0; x<boardSize.x; x++)
         {
-        	for (y=0; y<(screen->h); y+=tile->h)
+        	for (y=0; y<boardSize.y; y++)
         	{
-        		position.x = x;
-        		position.y = y;
-        		SDL_BlitSurface(tile, NULL, screen, &position);
-        	}
-        }
-        for (x=tile->w/2; x<(screen->w); x+=tile->w)
-        {
-        	for (y=tile->h/2; y<(screen->h); y+=tile->h)
-        	{
-        		position.x = x;
-        		position.y = y;
+        		position.x = origin.x+(y+x)*(tile->w/2);
+        		position.y = origin.y+(-y+x)*(tile->h/2)-(tile->h/2); //we substract the height of the tile to fit the corner of the first square to the origin.
         		SDL_BlitSurface(tile, NULL, screen, &position);
         	}
         }
