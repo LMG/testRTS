@@ -1,3 +1,5 @@
 To compile, simply run make.
 
+Please note that you will need the SDL and SDL Image libraries.
+
 You can then run the "game" with ./main
