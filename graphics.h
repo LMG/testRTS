@@ -9,5 +9,6 @@
 
 //initialization of the SDL.
 void initSDL (SDL_Surface **screen);
+void game (SDL_Surface *screen, SDL_Rect* origin, int *value);
 
 #endif
