@@ -41,9 +41,16 @@ int main(int argc, char *argv[])
 				// button press
 				case SDL_MOUSEBUTTONDOWN:
 					move = 1;
+					switch(event.button.button)
+					{
+						case SDL_BUTTON_LEFT:
+							move = 1;
+							break;
+					}
 					break;
 				case SDL_MOUSEBUTTONUP:
 					move = 0;
+					
 					break;			
 				case SDL_MOUSEMOTION:
 					if(move==1)
@@ -51,6 +58,7 @@ int main(int argc, char *argv[])
 						map.origin.x = map.origin.x+event.motion.xrel;
 						map.origin.y = map.origin.y+event.motion.yrel;
 					}
+					
 					break;								
 		        case SDL_QUIT:
 		            keepPlaying = 0;
