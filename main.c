@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     int value = 0;//stupid test
 
 	int move=0;
-
+	int start;
     
     while (keepPlaying)
     {
@@ -28,21 +28,27 @@ int main(int argc, char *argv[])
 		    {
 				// button press
 				case SDL_MOUSEBUTTONDOWN:
-					move = 1;
+					switch(event.button.button)
+					{
+						case SDL_BUTTON_LEFT:
+							move = 1;
+							break;
+					}
 					
 				
 					break;
 				case SDL_MOUSEBUTTONUP:
 					move = 0;
+					
 					break;			
 				case SDL_MOUSEMOTION:
 					if(move==1)
 					{
 						origin.x = origin.x+event.motion.xrel;
 						origin.y = origin.y+event.motion.yrel;
-						
-						
+									
 					}
+					
 					break;								
 		        case SDL_QUIT:
 		            keepPlaying = 0;
