@@ -3,7 +3,7 @@
 #include <time.h>
 #include "graphics.h"
 
-#define DELAY 25
+enum { NONE, RIGHT, LEFT, UP, DOWN };
 
 int main(int argc, char *argv[])
 {
@@ -16,23 +16,42 @@ int main(int argc, char *argv[])
     SDL_Event event;
     int keepPlaying = 1;
 	int move=0;
+	int direction=NONE;
 	
 	//map
 	struct map map;
 	map.origin.x = 0;
 	map.origin.y = 0;
-	map.sizeX = 50;
-	map.sizeY = 50;
-	map.tile = malloc(map.sizeX*sizeof(int*));
+	map.sizeX = 3;
+	map.sizeY = 3;
+	map.tile = malloc(map.sizeX*sizeof(struct tile*));
 	int i, j;
 	for(i=0; i<map.sizeX; i++)
 	{
-		map.tile[i] = malloc(map.sizeY*sizeof(int));
+		map.tile[i] = malloc(map.sizeY*sizeof(struct tile));
 		for(j=0; j<map.sizeY; j++)
 		{
-			map.tile[i][j]=rand()%NB_TILES;//random for now
+			map.tile[i][j].id=rand()%NB_TILES;//random for now
+			map.tile[i][j].entitie=NULL;
 		}
 	}
+	
+	//entities
+	int nbEntities = 1;
+	map.tile[0][0].entitie=malloc(sizeof(struct entitie));
+	struct entitie *current = map.tile[0][0].entitie;
+	current->id = 0;
+	current->x = 5;
+	current->y = 5;
+	for(i=1; i<nbEntities; i++)
+	{
+		current->next = malloc(sizeof(struct entitie));
+		current = current->next;
+		current->id = 0;
+		current->x = 6;
+		current->y = 6;
+	}
+	current->next = NULL;
 	
     while (keepPlaying)
     {
@@ -72,29 +91,68 @@ int main(int argc, char *argv[])
 		                    keepPlaying = 0;
 		                    break;
 		                case SDLK_RIGHT:
-		                	map.origin.x +=5;
+		                	direction=RIGHT;
 		                	break;
 		               	case SDLK_LEFT:
-		                	map.origin.x -=5;
+		                	direction=LEFT;
 		               		break;
 		               	case SDLK_UP:
-		                	map.origin.y -=5;
+		                	direction=UP;
 		               		break;
 		               	case SDLK_DOWN:
-		                	map.origin.y +=5;
+		                	direction=DOWN;
 		               		break;
 		                default: 
 		                	break;
 		            }
 		            break;
+		         case SDL_KEYUP:
+		         	switch(event.key.keysym.sym)
+		         	{
+		         		case SDLK_RIGHT:
+		         			if (direction==RIGHT)
+		         				direction=NONE;
+		         			break;
+		         		case SDLK_LEFT:
+		         			if (direction==LEFT)
+		         				direction=NONE;
+		         			break;
+		         		case SDLK_UP:
+		         			if (direction==UP)
+		         				direction=NONE;
+		         			break;
+		         		case SDLK_DOWN:
+		         			if (direction==DOWN)
+		         				direction=NONE;
+		         			break;
+		         		default:
+		         			break;
+		         	}
+		         	break;
 		       default:
 		        	break;
 		    }
-		}    
+		}
+		
+		//moving the entitie
+		if(direction==UP)
+		{
+			map.tile[0][0].entitie->y -=1;
+		}
+		if(direction==DOWN)
+		{
+			map.tile[0][0].entitie->y +=1;
+		}
+		if(direction==LEFT)
+		{
+			map.tile[0][0].entitie->x -=1;
+		}
+		if(direction==RIGHT)
+		{
+			map.tile[0][0].entitie->x +=1;
+		}
+		
         game(screen, &map);
-        
-        //waiting
-        //SDL_Delay(DELAY);
     }
     
     SDL_Quit();
