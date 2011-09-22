@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "graphics.h"
 
 #define DELAY 25
@@ -9,6 +10,7 @@ int main(int argc, char *argv[])
 	//initialization of the SDL.
     SDL_Surface *screen = NULL;
 	initSDL(&screen);
+	srand(time(NULL));//to test the tiles.
 			
 	//main loop
     SDL_Event event;
@@ -19,8 +21,8 @@ int main(int argc, char *argv[])
 	struct map map;
 	map.origin.x = 0;
 	map.origin.y = 0;
-	map.sizeX = 10;
-	map.sizeY = 10;
+	map.sizeX = 50;
+	map.sizeY = 50;
 	map.tile = malloc(map.sizeX*sizeof(int*));
 	int i, j;
 	for(i=0; i<map.sizeX; i++)
@@ -28,7 +30,7 @@ int main(int argc, char *argv[])
 		map.tile[i] = malloc(map.sizeY*sizeof(int));
 		for(j=0; j<map.sizeY; j++)
 		{
-			map.tile[i][j]=(i+j)%NB_TILES;
+			map.tile[i][j]=rand()%NB_TILES;//random for now
 		}
 	}
 	

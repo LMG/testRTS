@@ -11,7 +11,7 @@
 #define TILE_HEIGHT 25
 #define TILE_WIDTH 48
 
-#define NB_TILES 6
+#define NB_TILES 10
 
 struct map {
 	SDL_Rect origin;
