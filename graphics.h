@@ -13,8 +13,15 @@
 
 #define NB_TILES 6
 
+struct map {
+	SDL_Rect origin;
+	int sizeX;
+	int sizeY;
+	int **tile;
+};
+
 //initialization of the SDL.
 void initSDL (SDL_Surface **screen);
-void game (SDL_Surface *screen, SDL_Rect* origin, int *value);
+void game (SDL_Surface *screen, struct map* map);
 
 #endif

@@ -13,15 +13,27 @@ int main(int argc, char *argv[])
 	//main loop
     SDL_Event event;
     int keepPlaying = 1;
-    SDL_Rect origin = {0,0};
-    int value = 0;//stupid test
-
 	int move=0;
-
-    
+	
+	//map
+	struct map map;
+	map.origin.x = 0;
+	map.origin.y = 0;
+	map.sizeX = 10;
+	map.sizeY = 10;
+	map.tile = malloc(map.sizeX*sizeof(int*));
+	int i, j;
+	for(i=0; i<map.sizeX; i++)
+	{
+		map.tile[i] = malloc(map.sizeY*sizeof(int));
+		for(j=0; j<map.sizeY; j++)
+		{
+			map.tile[i][j]=(i+j)%NB_TILES;
+		}
+	}
+	
     while (keepPlaying)
     {
-    	
         while(SDL_PollEvent(&event))
         {
 		    switch(event.type)
@@ -29,8 +41,6 @@ int main(int argc, char *argv[])
 				// button press
 				case SDL_MOUSEBUTTONDOWN:
 					move = 1;
-					
-				
 					break;
 				case SDL_MOUSEBUTTONUP:
 					move = 0;
@@ -38,10 +48,8 @@ int main(int argc, char *argv[])
 				case SDL_MOUSEMOTION:
 					if(move==1)
 					{
-						origin.x = origin.x+event.motion.xrel;
-						origin.y = origin.y+event.motion.yrel;
-						
-						
+						map.origin.x = map.origin.x+event.motion.xrel;
+						map.origin.y = map.origin.y+event.motion.yrel;
 					}
 					break;								
 		        case SDL_QUIT:
@@ -54,25 +62,17 @@ int main(int argc, char *argv[])
 		                    keepPlaying = 0;
 		                    break;
 		                case SDLK_RIGHT:
-		                	origin.x +=5;
+		                	map.origin.x +=5;
 		                	break;
 		               	case SDLK_LEFT:
-		                	origin.x -=5;
+		                	map.origin.x -=5;
 		               		break;
 		               	case SDLK_UP:
-		                	origin.y -=5;
+		                	map.origin.y -=5;
 		               		break;
 		               	case SDLK_DOWN:
-		                	origin.y +=5;
+		                	map.origin.y +=5;
 		               		break;
-		               	//stupid test
-		               	case SDLK_a:
-		               		value++;
-		               		break;
-		               	case SDLK_z:
-		               		value--;
-		               		break;
-			
 		                default: 
 		                	break;
 		            }
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 		        	break;
 		    }
 		}    
-        game(screen, &origin, &value);
+        game(screen, &map);
         
         //waiting
         //SDL_Delay(DELAY);
