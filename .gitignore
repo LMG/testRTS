@@ -37,4 +37,6 @@ Thumbs.db
 # Projects binaries and special files #
 #######################################
 main
+client
+server
 nohup.out
