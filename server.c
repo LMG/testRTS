@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
         WSAStartup(MAKEWORD(2,2), &WSAData);
     #endif
     
-    int args[5]= {0,0,0,0,0};
+    struct args args = {{0,0,0,0},0,{WAITING,WAITING,WAITING,WAITING},{0,0,0,0},{0,0,0,0}};//connexions status bits + client number, followed by the events flag + value for each client
     int i;
     
 	//the client's threads
@@ -16,12 +16,20 @@ int main(int argc, char* argv[])
 	for(i=0; i<CLIENT_NB; i++)
 	{
 		printf("thread %d\n", i);
-		pthread_create(&thread[i], NULL, manageClient, args);
+		pthread_create(&thread[i], NULL, manageClient, &args);
 	}
 	
-	while(!args[0] && !args[1] && args[2] && args[3])
+	while(!args.status[0] || !args.status[1] || !args.status[2] || !args.status[3])//wait until all clients are connected.
 	{
 		printf("awaiting for the connexions....\n");
+		sleep(1);
+	}
+	//everybody is connected
+	
+	//game logic
+	while(1)
+	{
+		printf("we play.\n");
 		sleep(1);
 	}
 	
@@ -49,11 +57,11 @@ void* manageClient(void* rawArgs)
 	SOCKET csock;
 	SOCKADDR_IN csin;
 	
-	int *args = (int*)rawArgs;
-	int *clientReady = args;//only up to 3 (4th case)
+	struct args *args = (struct args *)rawArgs;
+	int *clientReady = args->status;
 	//getting number of the client and updating the variable.
-	int num = args[4];
-	args[4] += 1;
+	int num = args->clientNum;
+	args->clientNum += 1;
 	
 	printf("Client %d\n", num);
 	

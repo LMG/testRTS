@@ -4,9 +4,19 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	
+	//events
+	enum events{ WAITING, MOVE };
+	
 	//multi-thread
 	#include <pthread.h>
 	void* manageClient(void*);
+	struct args {
+		int status[4];
+		int clientNum;
+		int event[4];
+		int data1[4];
+		int data2[4];
+	};
 	
 	//network
 	#if defined (WIN32)
