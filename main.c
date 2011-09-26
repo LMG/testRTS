@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 	struct map map;
 	map.origin.x = 0;
 	map.origin.y = 0;
-	map.sizeX = 3;
-	map.sizeY = 3;
+	map.sizeX = 200;
+	map.sizeY = 200;
 	map.tile = malloc(map.sizeX*sizeof(struct tile*));
 	int i, j;
 	for(i=0; i<map.sizeX; i++)
@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
 	}
 	
 	//entities
-	int nbEntities = 1;
-	map.tile[0][0].entitie=malloc(sizeof(struct entitie));
-	struct entitie *current = map.tile[0][0].entitie;
+	int nbEntities = 2;
+	map.tile[5][5].entitie=malloc(sizeof(struct entitie));
+	struct entitie *current = map.tile[5][5].entitie;
 	current->id = 0;
 	current->x = 5;
 	current->y = 5;
@@ -137,19 +137,19 @@ int main(int argc, char *argv[])
 		//moving the entitie
 		if(direction==UP)
 		{
-			map.tile[0][0].entitie->y -=1;
+			map.tile[5][5].entitie->y -=1;
 		}
 		if(direction==DOWN)
 		{
-			map.tile[0][0].entitie->y +=1;
+			map.tile[5][5].entitie->y +=1;
 		}
 		if(direction==LEFT)
 		{
-			map.tile[0][0].entitie->x -=1;
+			map.tile[5][5].entitie->x -=1;
 		}
 		if(direction==RIGHT)
 		{
-			map.tile[0][0].entitie->x +=1;
+			map.tile[5][5].entitie->x +=1;
 		}
 		
         game(screen, &map);

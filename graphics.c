@@ -75,10 +75,8 @@ void game (SDL_Surface *screen, struct map* map)
     		
     		//first the tile
 			position.x = map->origin.x+(x-y)*(TILE_WIDTH/2)-origin_tile[map->tile[x][y].id].x;
-			position.y = map->origin.y+(y+x)*(TILE_HEIGHT/2)-origin_tile[map->tile[x][y].id].y; //we makes the y and x position correspond with the origin of the tile.
+			position.y = map->origin.y+(y+x)*(TILE_HEIGHT/2)-origin_tile[map->tile[x][y].id].y; //we make the y and x position correspond with the origin of the tile.
 			SDL_BlitSurface(tile[map->tile[x][y].id], NULL, screen, &position);
-			
-			printf("x %d; y %d, id %d\n", x, y, map->tile[x][y].id);
 			
 			//then the eventual entitie
 			struct entitie *current = map->tile[x][y].entitie;
