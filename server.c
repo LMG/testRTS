@@ -8,36 +8,25 @@ int main(int argc, char* argv[])
         WSAStartup(MAKEWORD(2,2), &WSAData);
     #endif
     
-    struct args args = {{0,0,0,0},0,{WAITING,WAITING,WAITING,WAITING},{0,0,0,0},{0,0,0,0}};//connexions status bits + client number, followed by the events flag + value for each client
-    int i;
-    
-	//the client's threads
+    //connexions status bits + client number, followed by the events flag + value for each client
+    struct args args = {{0,0,0,0},0,{WAITING,WAITING,WAITING,WAITING},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
 	pthread_t thread[CLIENT_NB];
-	for(i=0; i<CLIENT_NB; i++)
-	{
-		printf("thread %d\n", i);
-		pthread_create(&thread[i], NULL, manageClient, &args);
-	}
-	
-	while(!args.status[0] || !args.status[1] || !args.status[2] || !args.status[3])//wait until all clients are connected.
-	{
-		printf("awaiting for the connexions....\n");
-		sleep(1);
-	}
-	//everybody is connected
+    
+    //wait for the clients connexions
+    clientConnexions(thread, &args);
 	
 	//game logic
 	while(1)
 	{
 		printf("we play.\n");
+		
+		//retrieve events
+		
+		//modify game structures
+		
+		//send events to clients threads
+		
 		sleep(1);
-	}
-	
-	//awaiting for the connexions end.
-	for(i=0; i<CLIENT_NB; i++)
-	{
-		void* returnValue;
-		pthread_join(thread[i], &returnValue);
 	}
 	
 	//for windows & the sockets
@@ -46,6 +35,37 @@ int main(int argc, char* argv[])
     #endif
 
     return EXIT_SUCCESS;
+}
+
+void clientConnexions(pthread_t thread[CLIENT_NB], struct args* args)
+{
+    int i;
+    
+	//the client's threads
+	for(i=0; i<CLIENT_NB; i++)
+	{
+		printf("thread %d\n", i);
+		pthread_create(&thread[i], NULL, manageClient, args);
+	}
+	
+	while(!args->status[0] || !args->status[1] || !args->status[2] || !args->status[3])//wait until all clients are connected.
+	{
+		printf("waiting for the connexions....\n");
+		sleep(1);
+	}
+	//everybody is connected
+}
+
+void closeConnexions(pthread_t thread[CLIENT_NB])
+{
+	int i;
+	
+	//waiting for the connexions end.
+	for(i=0; i<CLIENT_NB; i++)
+	{
+		void* returnValue;
+		pthread_join(thread[i], &returnValue);
+	}
 }
 
 //this function manage the clients and generates events for the game to handle
@@ -105,6 +125,7 @@ void* manageClient(void* rawArgs)
 	
 	else
 	{
+		//silly tests
 		printf("Client %d connected\n", num);
 		
 		clientReady[num]=1;
@@ -114,6 +135,19 @@ void* manageClient(void* rawArgs)
 	
 		recv(csock, buffer, 10, 0);
 		printf("received : %s\n", buffer);
+		
+		//game logic
+		while(1)
+		{
+			//I NEED TO RETHINK THIS I DON'T KNOW HOW TO DO IT
+			//retrieve game event sent by parent
+			
+			//send client event
+			
+			//retrieve game event sent by client
+			
+			//send parent event
+		}
 	}
 	
 	shutdown(csock, 2);

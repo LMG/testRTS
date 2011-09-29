@@ -4,19 +4,28 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	
+	
+	#define PORT 2300
+	#define CLIENT_NB 4
+	
 	//events
 	enum events{ WAITING, MOVE };
 	
 	//multi-thread
 	#include <pthread.h>
-	void* manageClient(void*);
+	void* manageClient(void*);//threads function
+	//arguments
 	struct args {
 		int status[4];
 		int clientNum;
 		int event[4];
 		int data1[4];
 		int data2[4];
+		int data3[4];
+		int data4[4];
 	};
+	void clientConnexions(pthread_t thread[CLIENT_NB], struct args*);//creates threads and waits for connexions
+	void closeConnexions(pthread_t thread[CLIENT_NB]);//close connexion
 	
 	//network
 	#if defined (WIN32)
@@ -41,8 +50,5 @@
 		typedef struct sockaddr SOCKADDR;
 		
 	#endif
-	
-	#define PORT 2300
-	#define CLIENT_NB 4
 
 #endif

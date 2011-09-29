@@ -22,17 +22,19 @@ int main(int argc, char *argv[])
     }
     //we are now connected
     
-    //receive
-    char buffer[10];
-    if(recv(sock, buffer, 10, 0)==SOCKET_ERROR)
-    {
-    	printf("Reception error\n");
+    //silly test
+	//receive
+	char buffer[10];
+	if(recv(sock, buffer, 10, 0)==SOCKET_ERROR)
+	{
+		printf("Reception error\n");
    	}
    	else
    	{
    		printf("Received : %s\n", buffer);
    	}
    	
+   	//send
    	strcpy(buffer, "prout");   	
    	if(send(sock, buffer, 10, 0)==SOCKET_ERROR)
    	{
@@ -41,12 +43,27 @@ int main(int argc, char *argv[])
    	else
    	{
    		printf("Sent : %s\n", buffer);
-   	}  
-    
-    //closing socket
+   	}
+   	
+    //game logic
+    while(1)
+    {
+    	//receive key strokes
+	   	//receive events from server
+	   	
+	   	//update game structures
+	   	
+	   	//send events to server
+	   	
+	   	//print game
+   	}
+   	
+   	
+   	//closing socket
 	shutdown(sock, 2);
-    closesocket(sock);
+	closesocket(sock);
 
+    
     #if defined (WIN32)
         WSACleanup();
     #endif
