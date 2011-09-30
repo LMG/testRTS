@@ -5,4 +5,4 @@ graphics.o :  graphics.c graphics.h
 server : server.c server.h
 	gcc -o server server.c -Wall -g -lpthread
 client : client.c client.h
-	gcc -o client client.c -Wall -g -lpthread
+	gcc -o client client.c graphics.o -Wall -g -lpthread -lSDL -lSDL_image 

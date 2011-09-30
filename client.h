@@ -32,6 +32,8 @@
 		
 	#endif
 	
+	SOCKET initNetwork();
+	
 	#define PORT 2300
 	
 #endif
