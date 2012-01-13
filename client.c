@@ -5,17 +5,35 @@ enum { NONE, RIGHT, LEFT, UP, DOWN };
 
 int main(int argc, char *argv[])
 {
-	#if defined (WIN32)
-        WSADATA WSAData;
-        WSAStartup(MAKEWORD(2,2), &WSAData);
-    #endif
-	
-	//network initialisation
-	SOCKET sock = initNetwork();
-    //we are now connected
     
-    //silly test
-		//receive
+    //init
+   	
+   		printf("Random numbers initialization...\n");
+		srand(time(NULL));
+		printf("Done.\n");
+		
+		//network initialisation
+		printf("Network intialization...\n");
+		#if defined (WIN32)
+		    WSADATA WSAData;
+		    WSAStartup(MAKEWORD(2,2), &WSAData);
+		#endif
+		SOCKET sock = initNetwork();
+		printf("Done.\n");
+		//we are now connected
+		
+	   	//SDL initalisation
+	   	printf("Graphics initialization...\n");
+		SDL_Surface *screen = NULL;
+		initSDL(&screen);
+		printf("Done.\n");
+		
+		//game structures
+		printf("Games structures initalization...\n");
+		printf("Done.\n");
+		
+    	//receive the map from server
+    	printf("Receiving the map from server...\n");
 		char buffer[10];
 		if(recv(sock, buffer, 10, 0)==SOCKET_ERROR)
 		{
@@ -25,22 +43,7 @@ int main(int argc, char *argv[])
 	   	{
 	   		printf("Received : %s\n", buffer);
 	   	}
-	   	
-	   	//send
-	   	strcpy(buffer, "prout");   	
-	   	if(send(sock, buffer, 10, 0)==SOCKET_ERROR)
-	   	{
-	   		printf("Sending error\n");
-	   	}
-	   	else
-	   	{
-	   		printf("Sent : %s\n", buffer);
-	   	}
-   	
-   	//SDL initalisation
-    SDL_Surface *screen = NULL;
-	initSDL(&screen);
-	srand(time(NULL));//to test the tiles.
+	   	printf("Done.\n");
 			
 	//main loop
     SDL_Event event;
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
 	int move=0;
 	int direction=NONE;
 	
-	//map
+	//map TODO: get it from the server
 	struct map map;
 	map.origin.x = 0;
 	map.origin.y = 0;
@@ -110,7 +113,6 @@ int main(int argc, char *argv[])
 						map.origin.x = map.origin.x+event.motion.xrel;
 						map.origin.y = map.origin.y+event.motion.yrel;
 					}
-					
 					break;								
 		        case SDL_QUIT:
 		            keepPlaying = 0;
