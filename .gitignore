@@ -40,3 +40,13 @@ main
 client
 server
 nohup.out
+
+# CodeBlocks files #
+####################
+testRTS.cbp
+testRTS.layout
+MakeFileCodeBlocks
+SDL.dll
+testRTS.depend
+stdout.txt
+stderr.txt

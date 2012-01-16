@@ -1,6 +1,9 @@
 #ifndef DEF_GRAPHICS
 #define DEF_GRAPHICS
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <string.h>

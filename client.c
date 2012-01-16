@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "client.h"
 #include "graphics.h"
 
@@ -5,13 +7,12 @@ enum { NONE, RIGHT, LEFT, UP, DOWN };
 
 int main(int argc, char *argv[])
 {
-    
+
     //init
-   	
    		printf("Random numbers initialization...\n");
 		srand(time(NULL));
 		printf("Done.\n");
-		
+
 		//network initialisation
 		printf("Network intialization...\n");
 		#if defined (WIN32)
@@ -21,17 +22,17 @@ int main(int argc, char *argv[])
 		SOCKET sock = initNetwork();
 		printf("Done.\n");
 		//we are now connected
-		
+
 	   	//SDL initalisation
 	   	printf("Graphics initialization...\n");
 		SDL_Surface *screen = NULL;
 		initSDL(&screen);
 		printf("Done.\n");
-		
+
 		//game structures
 		printf("Games structures initalization...\n");
 		printf("Done.\n");
-		
+
     	//receive the map from server
     	printf("Receiving the map from server...\n");
 		char buffer[10];
@@ -44,13 +45,13 @@ int main(int argc, char *argv[])
 	   		printf("Received : %s\n", buffer);
 	   	}
 	   	printf("Done.\n");
-			
+
 	//main loop
     SDL_Event event;
     int keepPlaying = 1;
 	int move=0;
 	int direction=NONE;
-	
+
 	//map TODO: get it from the server
 	struct map map;
 	map.origin.x = 0;
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
 			map.tile[i][j].entitie=NULL;
 		}
 	}
-	
+
 	//entities
 	int nbEntities = 2;
 	map.tile[5][5].entitie=malloc(sizeof(struct entitie));
@@ -85,7 +86,7 @@ int main(int argc, char *argv[])
 		current->y = 6;
 	}
 	current->next = NULL;
-	
+
     while (keepPlaying)
     {
 		//receive key strokes
@@ -105,15 +106,15 @@ int main(int argc, char *argv[])
 					break;
 				case SDL_MOUSEBUTTONUP:
 					move = 0;
-					
-					break;			
+
+					break;
 				case SDL_MOUSEMOTION:
 					if(move==1)
 					{
 						map.origin.x = map.origin.x+event.motion.xrel;
 						map.origin.y = map.origin.y+event.motion.yrel;
 					}
-					break;								
+					break;
 		        case SDL_QUIT:
 		            keepPlaying = 0;
 		            break;
@@ -135,7 +136,7 @@ int main(int argc, char *argv[])
 		               	case SDLK_DOWN:
 		                	direction=DOWN;
 		               		break;
-		                default: 
+		                default:
 		                	break;
 		            }
 		            break;
@@ -166,10 +167,10 @@ int main(int argc, char *argv[])
 		        	break;
 		    }
 		}
-		
-		
-	   	//receive events from server
-	   	
+
+
+	   	//receive events from server => to do in another thread
+
 	   	//update game structures
 		//moving the entitie
 		if(direction==UP)
@@ -188,22 +189,22 @@ int main(int argc, char *argv[])
 		{
 			map.tile[5][5].entitie->x +=1;
 		}
-	   	
-	   	//send events to server
-	   	
+
+	   	//send events to server, ok.
+
 	   	//print game
         game(screen, &map);
     }
-    
-    
+
+
     //cleanup
-    SDL_Quit();   	
-   	
+    SDL_Quit();
+
    	//closing socket
 	shutdown(sock, 2);
 	closesocket(sock);
 
-    
+
     #if defined (WIN32)
         WSACleanup();
     #endif
@@ -226,6 +227,6 @@ SOCKET initNetwork()
     	printf("Connexion error\n");
     	sleep(1);
     }
-    
+
     return sock;
 }

@@ -3,14 +3,14 @@
 
 	#include <stdio.h>
 	#include <stdlib.h>
-	
-	
+
+
 	#define PORT 2300
 	#define CLIENT_NB 4
-	
+
 	//events
 	enum events{ WAITING, MOVE };
-	
+
 	//multi-thread
 	#include <pthread.h>
 	void* manageClient(void*);//threads function
@@ -26,12 +26,15 @@
 	};
 	void clientConnexions(pthread_t thread[CLIENT_NB], struct args*);//creates threads and waits for connexions
 	void closeConnexions(pthread_t thread[CLIENT_NB]);//close connexion
-	
+
 	//network
 	#if defined (WIN32)
 
 		#include <winsock2.h>
 		typedef int socklen_t;
+
+        //we replace the sleep function by the Sleep function which takes microseconds and not seconds (hence the multiplication)
+		#define sleep(x) Sleep(1000*(x))
 
 	#elif defined (linux)
 
@@ -48,7 +51,7 @@
 		typedef int SOCKET;
 		typedef struct sockaddr_in SOCKADDR_IN;
 		typedef struct sockaddr SOCKADDR;
-		
+
 	#endif
 
 #endif
