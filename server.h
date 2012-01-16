@@ -10,35 +10,22 @@
 
 	//game and threads arguments structures
 	
-	//we define SDL_Rect as this is the only structure from SDL we need.
+	//we define SDL_Rect as this is the only structure from SDL we need. (and we don't want to include whole SDL for server)
 	typedef struct {
 		int x;
 		int y;
 	}SDL_Rect;
 	
-	struct entitie {
-		int id;
-		int x;
-		int y;
-		struct entitie* next;
-	};
-
-	struct tile {
-		int id;
-		struct entitie* entitie;
+	struct flags {//semaphores and changes flags.
+		int modifyingMap;//map being modified right now (need to be reset after modification)
+		int mapModified;//map has been modified since last reset of the flag
 	};
 	
-	struct map {
-		SDL_Rect origin;
-		int sizeX;
-		int sizeY;
-		struct tile **tile;
-	};
-
-	struct threadData {
+	struct threadData {//data sent to the threads
 		struct map* map;
 		int status;
 		int id;
+		struct flags* flags;
 	};
 	
 	//events
@@ -47,7 +34,7 @@
 	//multi-thread
 	#include <pthread.h>
 	void* manageClient(void*);//threads function
-	void clientConnexions(pthread_t thread[CLIENT_NB], struct map*);//creates threads and waits for connexions
+	void clientConnexions(pthread_t thread[CLIENT_NB], struct map*, struct flags*);//creates threads and waits for connexions
 	void closeConnexions(pthread_t thread[CLIENT_NB]);//close connexion
 	
 

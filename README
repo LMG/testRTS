@@ -4,4 +4,11 @@ Please note that you will need the SDL and SDL Image libraries.
 
 You can then run the "game" with ./main
 
-bite
+
+network messages reference:
+size max: 20
+\n				end of message
+clickxxxyyy		click in x=xxx and y=yyy on the screen
+morigxxxyyy		map origin is in x=xxx and y=yyy
+msizexxxyyy		map size in number of tiles is x=xxx and y=yyy
+

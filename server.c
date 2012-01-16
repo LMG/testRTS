@@ -1,4 +1,6 @@
+#include <string.h>
 #include "server.h"
+#include "game.h"
 
 int main(int argc, char* argv[])
 {
@@ -8,24 +10,47 @@ int main(int argc, char* argv[])
         WSAStartup(MAKEWORD(2,2), &WSAData);
     #endif
     
-    //game structures
-    struct map map;
+    
+ 	//random map generation
+ 	srand(time(NULL));
+ 	struct map map;
+	map.origin.x = 0;
+	map.origin.y = 0;
+	map.sizeX = 200;
+	map.sizeY = 200;
+	map.tile = malloc(map.sizeX*sizeof(struct tile*));
+	int i, j;
+	for(i=0; i<map.sizeX; i++)
+	{
+		map.tile[i] = malloc(map.sizeY*sizeof(struct tile));
+		for(j=0; j<map.sizeY; j++)
+		{
+			map.tile[i][j].id=rand()%NB_TILES_TYPES;//random for now
+			map.tile[i][j].entitie=NULL;
+		}
+	}
+ 	
+    //threads
 	pthread_t thread[CLIENT_NB];
     
-    //wait for the clients connexions
-    clientConnexions(thread, &map);
-	
+    //flags
+    struct flags flags = {0,0};
+    
+    //waiting for the clients connexions
+    clientConnexions(thread, &map, &flags);
+		
 	//game logic
 	int play=1;
 	while(play)
 	{
 		printf("we play.\n");
 		
-		//retrieve events
-		
-		//modify game structures
-		
-		//send events to clients threads
+		//check for map modifications and send them to clients
+		if(flags.mapModified)
+		{
+			flags.mapModified=0;
+			//TODO: actually send modifications.
+		}
 		
 		sleep(1);
 	}
@@ -41,7 +66,7 @@ int main(int argc, char* argv[])
     return EXIT_SUCCESS;
 }
 
-void clientConnexions(pthread_t thread[CLIENT_NB], struct map* map)
+void clientConnexions(pthread_t thread[CLIENT_NB], struct map* map, struct flags* flags)
 {
     int client;
     struct threadData threadDataArray[CLIENT_NB];
@@ -54,11 +79,13 @@ void clientConnexions(pthread_t thread[CLIENT_NB], struct map* map)
 		threadDataArray[client].id=client;
 		threadDataArray[client].map=map;
 		threadDataArray[client].status=0;
+		threadDataArray[client].flags=flags;
 		pthread_create(&thread[client], NULL, manageClient, (void*)&threadDataArray[client]);
 	}
 	
+	//wait until all clients are connected.
 	int everybodyIsConnected=0;
-	while(!everybodyIsConnected)//wait until all clients are connected.
+	while(!everybodyIsConnected)
 	{
 		everybodyIsConnected=1;
 		for(client=0; client<CLIENT_NB; client++)
@@ -69,7 +96,6 @@ void clientConnexions(pthread_t thread[CLIENT_NB], struct map* map)
 		printf("waiting for the connexions....\n");
 		sleep(1);
 	}
-	//everybody is connected
 }
 
 void closeConnexions(pthread_t thread[CLIENT_NB])
@@ -138,25 +164,28 @@ void* manageClient(void* threadData)
 		return NULL;
 	}
 	
-	else
-	{
-		//silly tests
-		printf("Client %d connected\n", num);
-		
-		myData->status=1;
-		
-		char buffer[10] = "test";
-		send(csock, buffer, 10, 0);
+	//we are connected.
+	printf("Client %d connected\n", num);
 	
+	//send the map
+	//TODO:actually send the map
+	
+	//we are ready
+	myData->status=1;
+	
+	//receive event and update game structures
+	char buffer[BUFFER_SIZE];
+	while(1)
+	{
+		//retrieve game event sent by client
 		recv(csock, buffer, 10, 0);
-		printf("received : %s\n", buffer);
-		
-		//game logic
-		while(1)
-		{
-			//retrieve game event sent by client
 			
-			//update games structures
+		//TODO: have a buffer updated up to a closing character	
+			
+		//update games structures accordingly
+		if(strncmp(buffer, "click", 5)==0)
+		{
+			printf("click !!\n");
 		}
 	}
 	

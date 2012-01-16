@@ -14,8 +14,8 @@ void game (SDL_Surface *screen, struct map* map)
 	//initialisation
 	static int init = 0;
 
-	static SDL_Surface *tile[NB_TILES];
-	static SDL_Rect origin_tile[NB_TILES];
+	static SDL_Surface *tile[NB_TILES_TYPES];
+	static SDL_Rect origin_tile[NB_TILES_TYPES];
 	static SDL_Surface *entitie[NB_ENTITIES];
 	static SDL_Rect origin_entitie[NB_ENTITIES];
 
@@ -25,7 +25,7 @@ void game (SDL_Surface *screen, struct map* map)
 	{
 		init =1;
 
-		for(i=0; i<NB_TILES; i++)
+		for(i=0; i<NB_TILES_TYPES; i++)
 		{
 			char name[24] = "ressources/tile_";
 			sprintf(name, "%s%03d%s", name, i, ".png");

@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "client.h"
 #include "graphics.h"
+#include "game.h"
 
 enum { NONE, RIGHT, LEFT, UP, DOWN };
 
@@ -35,15 +37,24 @@ int main(int argc, char *argv[])
 
     	//receive the map from server
     	printf("Receiving the map from server...\n");
-		char buffer[10];
-		if(recv(sock, buffer, 10, 0)==SOCKET_ERROR)
+		struct map map;
+		//do it with if(recv(sock, buffer, 10, 0)==SOCKET_ERROR)
+		//map TODO: get it from the server
+		map.origin.x = 0;
+		map.origin.y = 0;
+		map.sizeX = 200;
+		map.sizeY = 200;
+		map.tile = malloc(map.sizeX*sizeof(struct tile*));
+		int i, j;
+		for(i=0; i<map.sizeX; i++)
 		{
-			printf("Reception error\n");
-	   	}
-	   	else
-	   	{
-	   		printf("Received : %s\n", buffer);
-	   	}
+			map.tile[i] = malloc(map.sizeY*sizeof(struct tile));
+			for(j=0; j<map.sizeY; j++)
+			{
+				map.tile[i][j].id=rand()%NB_TILES_TYPES;//random for now
+				map.tile[i][j].entitie=NULL;
+			}
+		}
 	   	printf("Done.\n");
 
 	//main loop
@@ -51,25 +62,7 @@ int main(int argc, char *argv[])
     int keepPlaying = 1;
 	int move=0;
 	int direction=NONE;
-
-	//map TODO: get it from the server
-	struct map map;
-	map.origin.x = 0;
-	map.origin.y = 0;
-	map.sizeX = 200;
-	map.sizeY = 200;
-	map.tile = malloc(map.sizeX*sizeof(struct tile*));
-	int i, j;
-	for(i=0; i<map.sizeX; i++)
-	{
-		map.tile[i] = malloc(map.sizeY*sizeof(struct tile));
-		for(j=0; j<map.sizeY; j++)
-		{
-			map.tile[i][j].id=rand()%NB_TILES;//random for now
-			map.tile[i][j].entitie=NULL;
-		}
-	}
-
+	
 	//entities
 	int nbEntities = 2;
 	map.tile[5][5].entitie=malloc(sizeof(struct entitie));
@@ -190,8 +183,9 @@ int main(int argc, char *argv[])
 			map.tile[5][5].entitie->x +=1;
 		}
 
-	   	//send events to server, ok.
-
+	   	//send events to server
+		send(sock, "click", 5, 0);
+		
 	   	//print game
         game(screen, &map);
     }
