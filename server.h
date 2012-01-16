@@ -8,24 +8,48 @@
 	#define PORT 2300
 	#define CLIENT_NB 4
 
+	//game and threads arguments structures
+	
+	//we define SDL_Rect as this is the only structure from SDL we need.
+	typedef struct {
+		int x;
+		int y;
+	}SDL_Rect;
+	
+	struct entitie {
+		int id;
+		int x;
+		int y;
+		struct entitie* next;
+	};
+
+	struct tile {
+		int id;
+		struct entitie* entitie;
+	};
+	
+	struct map {
+		SDL_Rect origin;
+		int sizeX;
+		int sizeY;
+		struct tile **tile;
+	};
+
+	struct threadData {
+		struct map* map;
+		int status;
+		int id;
+	};
+	
 	//events
 	enum events{ WAITING, MOVE };
 
 	//multi-thread
 	#include <pthread.h>
 	void* manageClient(void*);//threads function
-	//arguments
-	struct args {
-		int status[4];
-		int clientNum;
-		int event[4];
-		int data1[4];
-		int data2[4];
-		int data3[4];
-		int data4[4];
-	};
-	void clientConnexions(pthread_t thread[CLIENT_NB], struct args*);//creates threads and waits for connexions
+	void clientConnexions(pthread_t thread[CLIENT_NB], struct map*);//creates threads and waits for connexions
 	void closeConnexions(pthread_t thread[CLIENT_NB]);//close connexion
+	
 
 	//network
 	#if defined (WIN32)
