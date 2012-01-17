@@ -206,6 +206,11 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+void* receiveData(void* threadData)
+{
+	//TODO...
+}
+
 SOCKET initNetwork()
 {
 	//socket creation

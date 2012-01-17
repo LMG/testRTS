@@ -4,10 +4,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-
-	//multi-thread
-	#include <pthread.h>
-
+		
 	//network
 	#if defined (WIN32)
 
@@ -38,5 +35,15 @@
 	SOCKET initNetwork();
 
 	#define PORT 2300
+	
+	//multi-thread
+	#include <pthread.h>
+	struct threadData {//data sent to the thread
+		struct map* map;
+		int status;
+		int id;
+		struct flags* flags;
+		SOCKET sock;
+	};
 
 #endif

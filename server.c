@@ -30,15 +30,41 @@ int main(int argc, char* argv[])
 		}
 	}
  	
-    //threads
-	pthread_t thread[CLIENT_NB];
-    
     //flags
     struct flags flags = {0,0};
     
+    //threads
+	pthread_t thread[CLIENT_NB];
+	struct threadData dataClient[CLIENT_NB];
+	int client;
+	for(client=0; client<CLIENT_NB; client++)
+	{
+		//data shared with the thread
+		dataClient[client].id=client;
+		dataClient[client].map=&map;
+		dataClient[client].status=0;
+		dataClient[client].flags=&flags;
+		dataClient[client].sock=0;
+	}
+    
     //waiting for the clients connexions
-    clientConnexions(thread, &map, &flags);
-		
+    clientConnexions(thread, dataClient);
+	
+	//send map
+	char buffer[BUFFER_SIZE];
+	for(client=0; client<CLIENT_NB; client++)
+	{
+		sprintf(buffer, "morig%3d%3d\n", map.origin.x, map.origin.y);
+		send(dataClient[client].sock, buffer, 12, 0);
+		for(i=0; i<map.sizeX; i++)
+		{
+			for(j=0; j<map.sizeY; j++)
+			{
+				//send
+			}
+		}
+	}	
+	
 	//game logic
 	int play=1;
 	while(play)
@@ -50,6 +76,10 @@ int main(int argc, char* argv[])
 		{
 			flags.mapModified=0;
 			//TODO: actually send modifications.
+			for(client=0; client<CLIENT_NB; client++)
+			{
+				//send
+			}
 		}
 		
 		sleep(1);
@@ -66,20 +96,14 @@ int main(int argc, char* argv[])
     return EXIT_SUCCESS;
 }
 
-void clientConnexions(pthread_t thread[CLIENT_NB], struct map* map, struct flags* flags)
+void clientConnexions(pthread_t thread[CLIENT_NB], struct threadData threadDataArray[CLIENT_NB])
 {
     int client;
-    struct threadData threadDataArray[CLIENT_NB];
     
 	//the client's threads
 	for(client=0; client<CLIENT_NB; client++)
 	{
 		printf("thread %d\n", client);
-		//data shared with the thread
-		threadDataArray[client].id=client;
-		threadDataArray[client].map=map;
-		threadDataArray[client].status=0;
-		threadDataArray[client].flags=flags;
 		pthread_create(&thread[client], NULL, manageClient, (void*)&threadDataArray[client]);
 	}
 	
@@ -110,7 +134,7 @@ void closeConnexions(pthread_t thread[CLIENT_NB])
 	}
 }
 
-//thread function: this function manage the clients and updates the game structures according to what it receives.
+//thread function: this function manage the clients and updates the game structures according to what it receives. It is only for reception.
 void* manageClient(void* threadData)
 {
 	//the client and servers sockets and their addresses
@@ -167,8 +191,7 @@ void* manageClient(void* threadData)
 	//we are connected.
 	printf("Client %d connected\n", num);
 	
-	//send the map
-	//TODO:actually send the map
+	myData->sock=csock;
 	
 	//we are ready
 	myData->status=1;
