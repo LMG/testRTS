@@ -56,7 +56,14 @@ int main(int argc, char *argv[])
 			}
 		}
 	   	printf("Done.\n");
-
+	//init done.
+	
+	//thread to update game structures
+	pthread_t thread;
+	struct flags flags={0,0};
+	struct threadData threadData={&map, &flags, sock};
+	pthread_create(&thread, NULL, receiveData, (void*)&threadData);
+	
 	//main loop
     SDL_Event event;
     int keepPlaying = 1;
@@ -208,7 +215,10 @@ int main(int argc, char *argv[])
 
 void* receiveData(void* threadData)
 {
-	//TODO...
+	//thread data:
+	struct threadData *data=(struct threadData*)threadData;
+	data->flags->mapModified = 1;//TODO: continue.
+	return NULL;
 }
 
 SOCKET initNetwork()

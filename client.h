@@ -40,10 +40,15 @@
 	#include <pthread.h>
 	struct threadData {//data sent to the thread
 		struct map* map;
-		int status;
-		int id;
 		struct flags* flags;
 		SOCKET sock;
 	};
-
+	
+	struct flags {//semaphores and changes flags.
+		int modifyingMap;//map being modified right now (need to be reset after modification)
+		int mapModified;//map has been modified since last reset of the flag
+	};
+	
+	void* receiveData(void* threadData);//thread function
+	
 #endif
